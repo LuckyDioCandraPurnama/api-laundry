@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Transaksi;
 use App\Models\DetilTransaksi;
 use Carbon\Carbon;
-use JWTAuth;
+// use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
+
 
 class TransaksiController extends Controller
 {
@@ -30,11 +33,12 @@ class TransaksiController extends Controller
 
         $transaksi = new Transaksi();
         $transaksi->id_member = $request->id_member;
-        $transaksi->tgl_order = Carbon::now();
-        $transaksi->batas_waktu = Carbon::now()->addDays(3);
+        $transaksi->tgl_order = Carbon::now()->format('Y-m-d');
+        $transaksi->batas_waktu = Carbon::now()->addDays(3)->format('Y-m-d');
         $transaksi->status = 'baru';
         $transaksi->dibayar = 'belum dibayar';
         $transaksi->id_user = $this->user->id;
+        // $transaksi->id_user = $request->id_user;
 
         $transaksi->save();
 
@@ -48,8 +52,7 @@ class TransaksiController extends Controller
         $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
                     ->select('transaksi.*', 'member.nama')
                     ->get();
-                    
-        return response()->json(['success' => true, 'data' => $data]);
+        return response()->json($data);
     }
     
     public function update($id, Request $request)
@@ -77,7 +80,7 @@ class TransaksiController extends Controller
                                       ->select('transaksi.*', 'member.nama')
                                       ->where('transaksi.id', '=', $id)
                                       ->first();
-        return response()->json($data);
+            return response()->json($data);
     }
 
     public function changeStatus(Request $request, $id)
@@ -95,7 +98,7 @@ class TransaksiController extends Controller
         
         $transaksi->save();
         
-        return response()->json(['message' => 'Status berhasil diubah']);
+        return response()->json(['message' => 'Status berhasil diubah', $transaksi]);
     }
     
     public function bayar($id)
@@ -106,7 +109,7 @@ class TransaksiController extends Controller
         $transaksi->tgl_bayar = Carbon::now();
         $transaksi->status = "Diambil";
         $transaksi->dibayar = "dibayar";
-        $transaksi->total_bayar = $total;        
+        $transaksi->total = $total;        
         
         $transaksi->save();
         
@@ -128,12 +131,13 @@ class TransaksiController extends Controller
         $bulan = $request->bulan;
         
         $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
-                    ->select('transaksi.id','transaksi.tgl_order','transaksi.tgl_bayar','transaksi.total_bayar', 'member.nama')
+                    ->select('transaksi.id','transaksi.tgl_order','transaksi.tgl_bayar','transaksi.total', 'member.nama')
                     ->whereYear('tgl_order', '=' , $tahun)
                     ->whereMonth('tgl_order', '=', $bulan)
                     ->get();
 
         return response()->json($data);
     }
+
 
 }

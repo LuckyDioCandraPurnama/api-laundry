@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Outlet;
-use JWTAuth;
+// use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class OutletController extends Controller
 {
@@ -46,10 +48,7 @@ class OutletController extends Controller
     {
         $data = Outlet::where('id', '=', $id)->first();
         
-        return response()->json([
-            'success' => true,
-            'data' => $data
-        ]);
+        return response()->json($data);
     }
 
     public function update(Request $request, $id)

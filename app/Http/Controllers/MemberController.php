@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Member;
-use JWTAuth;
+// use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class MemberController extends Controller
 {
@@ -39,6 +41,7 @@ class MemberController extends Controller
         $data = Member::where('id', '=', $member->id)->first();
 
         return response()->json([
+            'success' => true,
             'message' => 'Data member berhasil ditambahkan',
             'data' => $data
         ]);

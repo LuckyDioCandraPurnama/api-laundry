@@ -13,7 +13,7 @@ class DashboardController extends Controller
         $member = Member::count();
         $baru = Transaksi::where('status', '=' , 'Baru' )->count();        
         $proses = Transaksi::where('status', '=' , 'Proses' )->count();
-        $pendapatan = Transaksi::where('dibayar' , '=' , 'dibayar')->sum('total_bayar');
+        $pendapatan = Transaksi::where('dibayar' , '=' , 'dibayar')->sum('total');
 
         return response()->json([
             'member' => $member,

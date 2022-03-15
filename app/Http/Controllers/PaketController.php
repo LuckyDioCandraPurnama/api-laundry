@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Paket;
-use JWTAuth;
+// use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class PaketController extends Controller
 {
@@ -39,20 +41,14 @@ class PaketController extends Controller
     public function getAll()
     {
         $data = Paket::get();
-        return response()->json([
-            'success' => true,
-            'data' => $data
-        ]);
+        return response()->json($data);
     }
 
     public function getById($id)
     {
         $data = Paket::where('id', '=', $id)->first();
         
-        return response()->json([
-            'success' => true,
-            'data' => $data
-        ]);
+        return response()->json($data);
     }
 
     public function update(Request $request, $id)

@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\DetilTransaksi;
 use App\Models\Paket;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use JWTAuth;
+// use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+
 
 class DetilTransaksiController extends Controller
 {
@@ -65,5 +68,30 @@ class DetilTransaksiController extends Controller
         return response()->json([
             'total' => $total
         ]);
+    }
+
+    public function struk(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'tahun' => 'required',
+            'bulan' => 'required'
+        ]);
+        
+        if($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+        $tahun = $request->tahun;
+        $bulan = $request->bulan;
+        $id = $request->bulan;
+        
+        $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
+                    ->select('transaksi.id','transaksi.tgl_order','transaksi.tgl_bayar','transaksi.total', 'member.nama')
+                    ->whereYear('tgl_order', '=' , $tahun)
+                    ->whereMonth('tgl_order', '=', $bulan)
+                    ->where('detil_transaksi.id_transaksi', '=', $id)
+                    ->get();
+
+        return response()->json($data);
     }
 }
