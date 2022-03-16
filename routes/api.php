@@ -19,6 +19,9 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir,owner']], function() {
     Route::post('logout', [UserController::class, 'logout']);
     Route::get('getuser', [UserController::class, 'getUser']);
     Route::get('dashboard', [DashboardController::class, 'index']);
+    //REPORT
+    Route::post('report', [TransaksiController::class, 'report']);
+    Route::get('struk', [DetilTransaksiController::class, 'struk']);
 });
 
 
@@ -41,7 +44,6 @@ Route::group(['middleware' => ['jwt.verify:admin']], function() {
     
     //USER
 });
-
 
 //Route khusus admin & kasir
 Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
@@ -74,7 +76,5 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
 //Route khusus Owner
 Route::group(['middleware' => ['jwt.verify:owner']], function() {
 });
-Route::post('report', [TransaksiController::class, 'report']);
-Route::post('struk', [DetilTransaksiController::class, 'struk']);
 
 

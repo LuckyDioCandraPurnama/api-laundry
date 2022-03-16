@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 // use JWTAuth;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Carbon\Carbon;
+
 
 
 class DetilTransaksiController extends Controller
@@ -70,28 +72,28 @@ class DetilTransaksiController extends Controller
         ]);
     }
 
+    // public function struk(Request $request)
     public function struk(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'tahun' => 'required',
-            'bulan' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'tahun' => 'required',
+        //     'bulan' => 'required'
+        // ]);
         
-        if($validator->fails()) {
-            return response()->json($validator->errors());
-        }
+        // if($validator->fails()) {
+        //     return response()->json($validator->errors());
+        // }
 
-        $tahun = $request->tahun;
-        $bulan = $request->bulan;
-        $id = $request->bulan;
+        $tahun = Carbon::now()->format('Y');
+        $bulan = Carbon::now()->format('m');
         
         $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
                     ->select('transaksi.id','transaksi.tgl_order','transaksi.tgl_bayar','transaksi.total', 'member.nama')
                     ->whereYear('tgl_order', '=' , $tahun)
                     ->whereMonth('tgl_order', '=', $bulan)
-                    ->where('detil_transaksi.id_transaksi', '=', $id)
                     ->get();
 
+        // return response()->json([$data,$bulan,$tahun]);
         return response()->json($data);
     }
 }

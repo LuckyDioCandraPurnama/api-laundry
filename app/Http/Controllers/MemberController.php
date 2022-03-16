@@ -42,7 +42,7 @@ class MemberController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Data member berhasil ditambahkan',
+            'message' => 'Berhasil Tambah Data',
             'data' => $data
         ]);
     }
@@ -80,7 +80,7 @@ class MemberController extends Controller
         
         $member->save();
 
-        return response()->json(['message' => 'Data member berhasil diubah']);        
+        return response()->json(['message' => 'Berhasil Update Data']);        
     }
 
     public function delete($id)
@@ -90,12 +90,12 @@ class MemberController extends Controller
         if($delete) {
             return response()->json([
                 'success' => true,
-                'message' => 'Data member berhasil dihapus'
+                'message' => 'Data Member Berhasil Dihapus'
             ]);
         } else {
             return response()->json([
-                'success' => true,
-                'message' => 'Data member gagal dihapus'
+                'success' => false,
+                'message' => 'Data Member Gagal Dihapus'
             ]);            
         }
     }

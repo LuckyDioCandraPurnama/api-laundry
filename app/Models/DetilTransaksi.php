@@ -9,4 +9,5 @@ class DetilTransaksi extends Model
 {
     protected $table = 'detil_transaksi';
     protected $fillable = ['id_transaksi', 'id_paket', 'quantity', 'subtotal'];
+    // protected $timestamp = false;
 }

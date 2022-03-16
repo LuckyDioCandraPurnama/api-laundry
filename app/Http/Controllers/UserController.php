@@ -67,6 +67,7 @@ class UserController extends Controller
 
 		$data = User::where('username', '=', $request->username)->first();
 		return response()->json([
+			'success' => true,
 			'message' => 'Berhasil menambah user',
 			'data' => $data
 		]);
