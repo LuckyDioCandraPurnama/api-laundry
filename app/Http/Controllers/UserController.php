@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\DB;
 // use JWTAuth;
 
 class UserController extends Controller
@@ -17,21 +18,24 @@ class UserController extends Controller
 		$credentials = $request->only('username', 'password');
 
 		try {
-			if (!$token = JWTAuth::attempt($credentials)) {
-				return response()->json(['message' => 'Invalid username and password']);
+			if(!$token = JWTAuth::attempt($credentials)){
+                return response()->json(['message' => 'Invalid username and password']);
 			}
-		} catch (JWTException $e) {
+		} catch(JWTException $e){
 			return response()->json(['message' => 'Generate Token Failed']);
 		}
 
 		$user = JWTAuth::user();
 
-		return response()->json([
-			'success' => true,
-			'message' => 'Login berhasil',
-			'token' => $token,
-			'user' => $user
-		]);
+		$outlet = DB::table('outlet')->where('id', $user->id_outlet)->first();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login berhasil',
+            'token' => $token,
+			'user' => $user,
+			'outlet' => $outlet
+        ]);
 	}
 
 	public function getUser()
@@ -103,7 +107,10 @@ class UserController extends Controller
 
 	public function getAll()
     {
-        $data = User::get();
+		$data = DB::table('users')->join('outlet', 'users.id_outlet', '=', 'outlet.id')
+                                            ->select('users.*', 'outlet.nama_outlet')
+                                            ->get();
+        // $data = User::get();
         return response()->json($data);
     }
 
@@ -130,13 +137,13 @@ class UserController extends Controller
         $user = User::where('id', '=', $id)->first();
 		$user->name 	= $request->name;
 		$user->username = $request->username;
-		$user->password = Hash::make($request->password);
+		if($request->password != null) {
+			$user->password = Hash::make($request->password);
+		}
 		$user->role 	= $request->role;
-		$user->id_outlet = $request->id_outlet;
-
 		$user->save();
 
-        return response()->json(['message' => 'Data member berhasil diubah']);        
+        return response()->json(['success' => true,'message' => 'Data User berhasil diubah']);        
     }
 	public function delete($id)
     {

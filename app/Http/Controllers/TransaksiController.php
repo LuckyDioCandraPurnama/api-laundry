@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Models\User;
+use App\Models\Outlet;
 use App\Models\Transaksi;
 use App\Models\DetilTransaksi;
 use Carbon\Carbon;
@@ -49,8 +51,13 @@ class TransaksiController extends Controller
 
     public function getAll()
     {
+        $id_user = $this->user->id;
+        $data_user = User::where('id', '=', $id_user)->first();
+        
         $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
-                    ->select('transaksi.*', 'member.nama')
+                    ->join('users', 'transaksi.id_user', 'users.id')
+                    ->select('transaksi.*', 'member.nama','users.name')
+                    ->where('users.id_outlet', $data_user->id_outlet)
                     ->get();
         return response()->json($data);
     }
@@ -137,6 +144,68 @@ class TransaksiController extends Controller
                     ->get();
 
         return response()->json($data);
+    }
+    public function reportOutlet(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'tahun' => 'required',
+            'bulan' => 'required'
+        ]);
+        
+        if($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+        $tahun = $request->tahun;
+        $bulan = $request->bulan;
+
+        $id_user = $this->user->id;
+        $data_user = User::where('id', '=', $id_user)->first();
+        
+        $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
+                                      ->join('users', 'transaksi.id_user', '=', 'users.id')
+                                      ->select('transaksi.id', 'member.nama' , 'transaksi.tgl_order','transaksi.tgl_bayar','transaksi.total', 'users.name' )
+                                      ->where('users.id_outlet', $data_user->id_outlet)
+                                      ->whereYear('transaksi.tgl_order', '=' , $tahun)
+                                      ->whereMonth('transaksi.tgl_order', '=', $bulan)
+                                      ->get();
+
+        return response()->json($data);
+    }
+
+
+    public function reportOutlet2(Request $request)
+    {     
+        $validator = Validator::make($request->all(), [
+            'tahun' => 'required',
+            'bulan' => 'required',
+            'id_outlet' => 'required',
+        ]);
+        
+        if($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+        $tahun = $request->tahun;
+        $bulan = $request->bulan;
+        $transaksi = new Outlet();
+        $transaksi->id_outlet = $request->id_outlet;
+
+        // $data = Transaksi::where('id', '=', $id_user)->first();
+        $data = DB::table('transaksi')->join('member', 'transaksi.id_member', '=', 'member.id')
+                    ->join('users', 'transaksi.id_user', '=', 'users.id')
+                    ->join('outlet', 'users.id_outlet', '=', 'outlet.id')
+                    ->select('transaksi.id','transaksi.tgl_order','transaksi.tgl_bayar','transaksi.total', 'transaksi.id_user','member.nama','outlet.nama_outlet')
+                    // ->where('id_user', '=', $transaksi)
+                    ->where('outlet.id', '=', $transaksi->id_outlet)
+                    ->get();
+
+        // return response()->json($data);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil Data',
+            'data' => $data
+        ]);
     }
 
 

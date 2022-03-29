@@ -18,7 +18,7 @@ class OutletController extends Controller
     public function store(Request $request)     
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required',
+            'nama_outlet' => 'required',
             'alamat' => 'required'
         ]);
 
@@ -27,7 +27,7 @@ class OutletController extends Controller
 		}
 
         $outlet = new Outlet();
-        $outlet->nama = $request->nama;
+        $outlet->nama_outlet = $request->nama_outlet;
         $outlet->alamat = $request->alamat;
         $outlet->save();
 
@@ -54,7 +54,7 @@ class OutletController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required',
+            'nama_outlet' => 'required',
             'alamat' => 'required'
         ]);
 
@@ -63,7 +63,7 @@ class OutletController extends Controller
         }
 
         $outlet = Outlet::where('id', '=', $id)->first();
-        $outlet->nama = $request->nama;
+        $outlet->nama_outlet = $request->nama_outlet;
         $outlet->alamat = $request->alamat;
 
         $outlet->save();

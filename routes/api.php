@@ -21,6 +21,8 @@ Route::group(['middleware' => ['jwt.verify:admin,kasir,owner']], function() {
     Route::get('dashboard', [DashboardController::class, 'index']);
     //REPORT
     Route::post('report', [TransaksiController::class, 'report']);
+    Route::post('report/outlet', [TransaksiController::class, 'reportOutlet']);
+    Route::post('report/outlet2', [TransaksiController::class, 'reportOutlet2']);
     Route::get('struk', [DetilTransaksiController::class, 'struk']);
 });
 
@@ -36,8 +38,7 @@ Route::group(['middleware' => ['jwt.verify:admin']], function() {
     Route::delete('outlet/{id}', [OutletController::class, 'delete']);
     
     //PAKET
-    Route::get('paket', [PaketController::class, 'getAll']);
-    Route::get('paket/{id}', [PaketController::class, 'getById']);
+    
     Route::post('paket', [PaketController::class, 'store']);
     Route::put('paket/{id}', [PaketController::class, 'update']);
     Route::delete('paket/{id}', [PaketController::class, 'delete']);
@@ -47,6 +48,9 @@ Route::group(['middleware' => ['jwt.verify:admin']], function() {
 
 //Route khusus admin & kasir
 Route::group(['middleware' => ['jwt.verify:admin,kasir']], function() {
+    //PAKET
+    Route::get('paket', [PaketController::class, 'getAll']);
+    Route::get('paket/{id}', [PaketController::class, 'getById']);
     //USER
     Route::post('user/tambah', [UserController::class, 'register']);    
     Route::get('user', [UserController::class, 'getAll']);    
